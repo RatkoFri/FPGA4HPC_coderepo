@@ -69,9 +69,16 @@ int main(int argc, char** argv) {
     // STEP 0: Initialize data 
     //***************************************************
     
-    vector<int> source_a(DATA_SIZE, 1); // ini
-    vector<int> source_b(DATA_SIZE, 1);
-    vector<int> source_c(DATA_SIZE, 0);
+    int a[DATA_SIZE];
+    int b[DATA_SIZE];
+    int c[DATA_SIZE];
+
+    for (int i = 0; i < DATA_SIZE; i++) {
+        a[i] = 1;
+        b[i] = 1;
+        c[i] = 0;
+    }
+    
 
     //***************************************************
     // STEP 1: Get the platform 
@@ -128,16 +135,16 @@ int main(int argc, char** argv) {
     //***************************************************
     // we create a command queue with the selected device and context using CommandQueue class 
     
-    cl::CommandQueue q(context, device, CL_QUEUE_PROFILING_ENABLE, &err);
+    cl::CommandQueue q(context, device, CL_QUEUE_PROFILING_ENABLE, &err);sdsss
     cout << "COMMAND QUEUE ERROR: " << err << endl;
 
     //***************************************************
     // STEP 5: Create device buffers
     //***************************************************
 
-    cl::Buffer buffer_a(context, CL_MEM_READ_ONLY, source_a.size() * sizeof(int), nullptr, &err);
-    cl::Buffer buffer_b(context, CL_MEM_READ_ONLY, source_b.size() * sizeof(int), nullptr, &err);
-    cl::Buffer buffer_res(context, CL_MEM_READ_WRITE, source_a.size() * sizeof(int), nullptr, &err);
+    cl::Buffer buffer_a(context, CL_MEM_COPY_HOST_PTR | CL_MEM_READ_ONLY, DATA_SIZE * sizeof(int), a, &err);    
+    cl::Buffer buffer_b(context, CL_MEM_COPY_HOST_PTR | CL_MEM_READ_ONLY, DATA_SIZE * sizeof(int), b, &err);
+    cl::Buffer buffer_res(context, CL_MEM_ALLOC_HOST_PTR | CL_MEM_READ_WRITE, DATA_SIZE * sizeof(int), nullptr, &err);
 
     //***************************************************
     // STEP 6: Create a program object for the context
@@ -166,8 +173,9 @@ int main(int argc, char** argv) {
     // STEP 7: Write host data to device buffers
     //***************************************************
 
-    q.enqueueWriteBuffer( buffer_a,  CL_FALSE, 0, source_a.size() * sizeof(int), source_a.data());
-    q.enqueueWriteBuffer( buffer_b,  CL_FALSE, 0, source_b.size() * sizeof(int), source_b.data());
+    
+    //q.enqueueWriteBuffer( buffer_a,  CL_FALSE, 0, source_a.size() * sizeof(int), source_a.data());
+    //q.enqueueWriteBuffer( buffer_b,  CL_FALSE, 0, source_b.size() * sizeof(int), source_b.data());
     
     //***************************************************
     // STEP 8: Set the kernel arguments
@@ -193,14 +201,14 @@ int main(int argc, char** argv) {
     
     q.finish();
 
-    q.enqueueReadBuffer(buffer_res, CL_TRUE, 0, result.size() * sizeof(int), result.data());
+    q.enqueueReadBuffer(buffer_res, CL_TRUE, 0, result.size() * sizeof(int), c);
 
 
     cout << "Calculating sum of resulting array: " << endl;
     
     int sum = 0;
     for (int i = 0; i < DATA_SIZE; i++){
-        sum += result[i];
+        sum += c[i];
     }
 
     cout << "SUM: " << sum << endl;

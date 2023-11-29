@@ -33,9 +33,9 @@ cd $BUILD_DIR
 pwd
 
 g++ $DIR/host.cpp -I$XILINX_XRT/include -I$XILINX_VIVADO/include -lOpenCL -o ./host
-emconfigutil --platform $PLATFORM
-v++ -c -t $1 --platform $PLATFORM --config $DIR/fpga.cfg -k $KERNEL $DIR/$KERNEL.cpp -o ./$KERNEL.xo
-v++ -l -t $1 --platform $PLATFORM  --config $DIR/fpga.cfg ./$KERNEL.xo -o ./$KERNEL.xclbin
+#emconfigutil --platform $PLATFORM
+#v++ -c -t $1 --platform $PLATFORM --config $DIR/fpga.cfg -k $KERNEL $DIR/$KERNEL.cpp -o ./$KERNEL.xo
+#v++ -l -t $1 --platform $PLATFORM  --config $DIR/fpga.cfg ./$KERNEL.xo -o ./$KERNEL.xclbin
 
 
 cd $HOME
