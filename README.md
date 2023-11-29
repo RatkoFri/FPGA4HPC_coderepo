@@ -1,8 +1,23 @@
-# Sample GitLab Project
+# Code samples for EuroCC workshop on FPGA programming with OpenCL and XRT [^1]
 
-This sample project shows how a project in GitLab looks for demonstration purposes. It contains issues, merge requests and Markdown files in many branches,
-named and filled with lorem ipsum.
+This repository contains code samples, which we will use during the workshop on FPGA programming with OpenCL and XRT.
 
-You can look around to get an idea how to structure your project and, when done, you can safely delete this project.
+## Installation
+Download the code using:
 
-[Learn more about creating GitLab projects.](https://docs.gitlab.com/ee/gitlab-basics/create-project.html)
+```console
+$ git clone https://repo.sling.si/ratkop/programming-fpga.git
+```
+
+and move to subdirectory:
+
+```console
+$ cd programming-fpga
+```
+___
+
+[^1]: 
+ &copy; Nejc Ilc and Ratko Pilipović, University of Ljubljana, Faculty of computer and information science. 
+ The materials are published under license [Attribution-NonCommercial-ShareAlike 4.0 International](https://creativecommons.org/licenses/by-nc-sa/4.0/).
+
+___
