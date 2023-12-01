@@ -1,3 +1,9 @@
+//
+//  Created by Ratko Pilipovic on 22/11/2023.
+//  Copyright © 023 Ratko Pilipovic  UL FRI. All rights reserved.
+//
+
+
 extern "C" {
     void matv_mult(int* c,
         const int* a,

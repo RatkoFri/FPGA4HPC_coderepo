@@ -1,3 +1,9 @@
+//
+//  Created by Ratko Pilipovic on 22/11/2023.
+//  Copyright © 023 Ratko Pilipovic  UL FRI. All rights reserved.
+//
+
+
 #define BUFFER_SIZE 256
 
 extern "C" {
