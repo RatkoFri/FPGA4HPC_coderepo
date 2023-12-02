@@ -3,3 +3,4 @@
 build/
 logs/
 *.json
+06-matv_mult-hostOpt/hw_syn.log
