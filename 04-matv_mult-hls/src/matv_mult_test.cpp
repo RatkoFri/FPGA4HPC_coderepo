@@ -34,7 +34,7 @@ int main() {
 
     // perform matrix vector multiplication on FPGA
     int c_hw[MAT_SIZE];
-    matv_mult_opt(c_hw, (int*)a, (int*)b, MAT_SIZE);
+    matv_mult_opt(c_hw, (int*)a, (int*)b);
 
     // compare results
     for (int i = 0; i < MAT_SIZE; i++) {

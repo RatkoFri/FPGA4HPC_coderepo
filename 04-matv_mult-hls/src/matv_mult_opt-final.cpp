@@ -19,7 +19,7 @@ extern "C" {
         int b_local[BLOCK_DIM_SIZE];
         #pragma HLS array_partition variable=b_local type=complete
         int c_local[BLOCK_DIM_SIZE];
-        #pragma HLS array_partition variable=c_local type=cyclic factor=16 
+        #pragma HLS array_partition variable=c_local type=complete
 
 
 

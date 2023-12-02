@@ -6,8 +6,7 @@
 extern "C" {
     void matv_mult_opt(int* c,
         const int* a,
-        const int* b,
-        const int dims);
+        const int* b);
 }
 
 #endif  // MATRIX_VECTOR_MULT_H
