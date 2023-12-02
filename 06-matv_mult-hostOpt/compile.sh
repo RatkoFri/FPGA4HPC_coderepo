@@ -2,7 +2,9 @@
 #!/bin/bash
 # IF statement if shell which determines the paths for xrt and vivado
 # one branch for NSC one branch for ITI4CS 
-PLATFORM=xilinx_u250_gen3x16_xdma_4_1_202210_1
+#PLATFORM=xilinx_u250_gen3x16_xdma_4_1_202210_1
+PLATFORM=xilinx_u280_gen3x16_xdma_1_202211_1
+
 
 IT4I_HOST="login.cs.it4i.cz"
 if test "$HOSTNAME" = "$IT4I_HOST"
