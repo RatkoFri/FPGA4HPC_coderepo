@@ -18,9 +18,9 @@ int main() {
     // initialize matrix and vector
     for (int i = 0; i < MAT_SIZE; i++) {
         for (int j = 0; j < MAT_SIZE; j++) {
-            a[i][j] = 1;
+            a[i][j] = i+j;
         }
-        b[i] = 1;
+        b[i] = i;
     }
 
     // perform matrix vector multiplication on CPU

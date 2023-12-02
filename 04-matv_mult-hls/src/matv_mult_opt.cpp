@@ -11,7 +11,7 @@ extern "C" {
         #pragma HLS interface m_axi port=b bundle=aximm2 max_read_burst_length = 16 max_write_burst_length = 1
         #pragma HLS interface m_axi port=c bundle=aximm1 max_read_burst_length = 16 max_write_burst_length = 16
 
-        #pragma HLS dataflow
+        //#pragma HLS dataflow
         // max_read_burst_length denotes the number of elements in the burst
         int a_local[BLOCK_DIM_SIZE][BLOCK_DIM_SIZE];  
         
@@ -19,9 +19,9 @@ extern "C" {
         int c_local[BLOCK_DIM_SIZE];
         
         
-        #pragma HLS array_partition variable=a_local type=complete
-        #pragma HLS array_partition variable=b_local type=complete
-        #pragma HLS array_partition variable=c_local type=complete
+        // #pragma HLS array_partition variable=a_local type=complete
+        // #pragma HLS array_partition variable=b_local type=complete
+        // #pragma HLS array_partition variable=c_local type=complete
         
         // load matrix a into local RAM 
         I_load_a:

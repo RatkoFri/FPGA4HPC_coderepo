@@ -1,5 +1,6 @@
+
+#include "matv_mult_dataflow.h"
 #define BLOCK_DIM_SIZE 64   
-//#define PARTITION  1
 
 void load_matA(int* a_local, const int* a) {
     // load matrix a into local RAM 
@@ -53,7 +54,7 @@ void store_result(int* c, int* c_local) {
 
 
 extern "C" {
-    void matv_mult_opt(int* c,
+    void matv_mult_dataflow(int* c,
         const int* a,
         const int* b){
         
@@ -63,7 +64,7 @@ extern "C" {
 
         #pragma HLS dataflow
         // max_read_burst_length denotes the number of elements in the burst
-        int a_local[BLOCK_DIM_SIZE * BLOCK_DIM_SIZE];  
+        int a_local[BLOCK_DIM_SIZE][BLOCK_DIM_SIZE];  
         
         int b_local[BLOCK_DIM_SIZE];
         int c_local[BLOCK_DIM_SIZE];
@@ -74,7 +75,7 @@ extern "C" {
         #pragma HLS array_partition variable=c_local type=complete
         
         // load matrix a into local RAM 
-        load_matA(a_local, a);
+        load_matA(&a_local[0][0], a);
 
 
         
@@ -83,7 +84,7 @@ extern "C" {
 
 
         // compute matrix vector product
-        mat_mult(c_local, a_local, b_local);
+        mat_mult(c_local, &a_local[0][0], b_local);
         
         
         // store result in global memory
