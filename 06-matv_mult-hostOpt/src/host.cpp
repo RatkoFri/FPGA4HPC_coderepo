@@ -36,7 +36,13 @@ using namespace std;
 vector<unsigned char> read_binary_file(const std::string &filename)
 {
     std::cout << "INFO: Reading " << filename << std::endl;
+
     std::ifstream file(filename, std::ios::binary);
+    //Check if the file is open
+    if (!file.is_open()) {
+        std::cerr << "ERROR: Failed to open file: " << filename << std::endl;
+        exit(1);
+    }
     file.unsetf(std::ios::skipws);
 
     std::streampos file_size;
@@ -191,10 +197,11 @@ int main(int argc, char** argv) {
     
     std::cout << "Trying to program device: " << device.getInfo<CL_DEVICE_NAME>() << std::endl;
     cl::Program program(context, {device}, bins, nullptr, &err);
+    cout << "PROGRAM ERROR: " << err << endl;
+
     //***************************************************
     // STEP 6: Create the kernel object
     //***************************************************
-    
     if (err != CL_SUCCESS) {
         std::cout << "Failed to program device with xclbin file!\n";
         cout << err << endl;
@@ -222,10 +229,11 @@ int main(int argc, char** argv) {
     vector <cl::Buffer> buffers_res(DIM_SIZE, cl::Buffer(context, CL_MEM_READ_ONLY, DIM_SIZE * sizeof(int), nullptr, &err));
     cout << "BUFFER ERROR: " << err << endl;
     
-    cl::Event write_event,task_event;
+    cl::Event write_event, task_event;
 
-    vector<cl::Event> iteration_events;
-    
+    cl::Event mEvent[3];
+    vector<cl::Event> event_array;
+
     /* Rešiteve: 
 
     https://docs.xilinx.com/r/2021.2-English/ug1393-vitis-application-acceleration/Multiple-In-Order-Command-Queues.html
@@ -234,42 +242,39 @@ int main(int argc, char** argv) {
     */
 
     int count = 0;
-    for (i = 0; i < 16; i++){
+    for (i = 0; i < 8; i++){
         // extract column from matB
         extractColumn((int*)matB, DIM_SIZE, DIM_SIZE, i, vecB );
         print_array(vecB, DIM_SIZE);
-    
+        cout << "HERE"  << endl;
         // Run kernels
-        q.enqueueWriteBuffer( buffers_b[i],  CL_TRUE, 0, DIM_SIZE * sizeof(int), (int*)vecB, &iteration_events, &write_event);
+        q.enqueueWriteBuffer( buffers_b[i],  CL_TRUE, 0, DIM_SIZE * sizeof(int), (int*)vecB, &event_array, &mEvent[0]);
         //q.enqueueWriteBuffer( buffers_a[i],  CL_FALSE, 0, DIM_SIZE * DIM_SIZE * sizeof(int), (int*)matA);
-        iteration_events.push_back(write_event);
+        event_array.push_back(mEvent[0]);
         // set kernel arguments
         kernel.setArg(0, buffers_res[i]);
         kernel.setArg(1, buffer_a);
         kernel.setArg(2, buffers_b[i]);
 
         //  run the kernel
-        q.enqueueTask(kernel,  &iteration_events, &task_event);
-        // read results back to the host 
-        q.enqueueReadBuffer(buffers_res[i], CL_TRUE, 0, DIM_SIZE * sizeof(int), intRes);
-        iteration_events.push_back(write_event);
+        q.enqueueTask(kernel,  &event_array, &mEvent[1]);
+        event_array.push_back(mEvent[1]);
 
-        count++;
-        if(count == 16)
-            q.finish();
-            count=0;
-        
-        //
-       
-           
+        //mEvent[1].wait();
+        // read results back to the host 
+        q.enqueueReadBuffer(buffers_res[i], CL_TRUE, 0, DIM_SIZE * sizeof(int), intRes, &event_array, &mEvent[2]);
+        event_array.push_back(mEvent[2]);
+
         
         // store the column into matC
         storeColumn((int*)res, DIM_SIZE, DIM_SIZE, i, intRes);
         count++;
+        
+        ///mEvent[2].wait();
 
         
     }
-  
+    q.finish();
     
     int sum = 0;
     cout << "RESULT: " << endl;

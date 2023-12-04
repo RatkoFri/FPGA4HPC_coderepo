@@ -135,7 +135,7 @@ int main(int argc, char** argv) {
     //***************************************************
     // we create a command queue with the selected device and context using CommandQueue class 
     
-    cl::CommandQueue q(context, device, CL_QUEUE_PROFILING_ENABLE, &err);sdsss
+    cl::CommandQueue q(context, device, CL_QUEUE_PROFILING_ENABLE, &err);
     cout << "COMMAND QUEUE ERROR: " << err << endl;
 
     //***************************************************
