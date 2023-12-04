@@ -28,7 +28,7 @@
 #include <CL/cl_ext_xilinx.h>
 
 #define DIM_SIZE 64
-#define KERNEL_CL "matv_mult_opt"
+#define KERNEL_CL "matv_mult_dataflow"
 
 
 using namespace std;
@@ -53,13 +53,32 @@ vector<unsigned char> read_binary_file(const std::string &filename)
     return data;
 }
 
+void extractColumn(int *matrix, int numRows, int numCols, int column, int *result) {
+    for (int i = 0; i < numRows; i++) {
+        result[i] = *(matrix + i*numCols + column);
+    }
+}
+
+void storeColumn(int *matrix, int numRows, int numCols, int column, int *result) {
+    for (int i = 0; i < numRows; i++) {
+        *(matrix + i*numCols + column) = result[i];
+    }
+}
+
+void print_array(int *array, int size) {
+    for (int i = 0; i < size; i++) {
+        cout << array[i] << " ";
+    }
+    cout << endl;
+}
+
 int main(int argc, char** argv) {
     
     cl_int err;
 
     // read arguments 
-    if (argc != 3) {
-        cout << "Usage: " << argv[0] << " device name kernel" << endl;
+    if (argc != 4) {
+        cout << "Usage: " << argv[0] << " device name kernel" << " OOO Execution" << endl;
         return EXIT_FAILURE;
     }
 
@@ -69,19 +88,32 @@ int main(int argc, char** argv) {
     // STEP 0: Initialize data 
     //***************************************************
     
-    int a[DIM_SIZE][DIM_SIZE];
-    int b[DIM_SIZE];
-    int c[DIM_SIZE];
+    // initialize matrix
+    int i,j;
+    // initialize matrices (vector of vectors)
+    int matA[DIM_SIZE][DIM_SIZE];
+    int matB[DIM_SIZE][DIM_SIZE];
 
-    for (int i = 0; i < DIM_SIZE; i++) {
-        for (int j = 0; j < DIM_SIZE; j++) {
-            a[i][j] = 1;
+    int vecB[DIM_SIZE];
+    int res[DIM_SIZE][DIM_SIZE];
+
+    // initialize matrix and vectors 
+    for(i=0;i<DIM_SIZE;i++){
+        for(j=0;j<DIM_SIZE;j++){
+            matA[i][j] = 1;
+            matB[i][j] = j+1;
         }
-        b[i] = 1;
-        c[i] = 0;
+        vecB[i] = 1;
     }
     
-
+    bool ooo = false;
+    if (atoi(argv[3]) != 0) {
+        cout << "OOO Execution" << endl;
+        ooo = true;
+    }
+    else {
+        cout << "Non OOO Execution" << endl;
+    }
     //***************************************************
     // STEP 1: Get the platform 
     //***************************************************
@@ -137,17 +169,17 @@ int main(int argc, char** argv) {
     //***************************************************
     // we create a command queue with the selected device and context using CommandQueue class 
     
-    cl::CommandQueue q(context, device, CL_QUEUE_PROFILING_ENABLE, &err);
+    cl_ulong qp = CL_QUEUE_PROFILING_ENABLE;
+    if (ooo)
+        qp = qp | CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE;
+
+    cl::CommandQueue q(context, device, qp, &err);
+    
     cout << "COMMAND QUEUE ERROR: " << err << endl;
 
-    //***************************************************
-    // STEP 5: Create device buffers
-    //***************************************************
 
-    cl::Buffer buffer_a(context, CL_MEM_COPY_HOST_PTR | CL_MEM_READ_ONLY, DIM_SIZE * DIM_SIZE * sizeof(int), (int*)a, &err);    
-    cl::Buffer buffer_b(context, CL_MEM_COPY_HOST_PTR | CL_MEM_READ_ONLY, DIM_SIZE * sizeof(int), b, &err);
-    cl::Buffer buffer_res(context, CL_MEM_ALLOC_HOST_PTR | CL_MEM_READ_WRITE, DIM_SIZE * sizeof(int), nullptr, &err);
 
+  
     //**************a*************************************
     // STEP 6: Create a program object for the context
     //***************************************************
@@ -172,44 +204,80 @@ int main(int argc, char** argv) {
          // we break because we found a valid device
     }
     //***************************************************
-    // STEP 7: Write host data to device buffers
+    // STEP 7: Preload buffer A 
     //***************************************************
-
+    cl::Buffer buffer_a(context, CL_MEM_COPY_HOST_PTR | CL_MEM_READ_ONLY, DIM_SIZE * DIM_SIZE * sizeof(int), (int*)matA, &err);    
     
-    //q.enqueueWriteBuffer( buffer_a,  CL_FALSE, 0, source_a.size() * sizeof(int), source_a.data());
-    //q.enqueueWriteBuffer( buffer_b,  CL_FALSE, 0, source_b.size() * sizeof(int), source_b.data());
+    int intRes[DIM_SIZE];
+    //***************************************************
+    // STEP 8: Create buffers for vecB and interim results 
+    //***************************************************
+
+    // create buffers, for each kernel running in parallel
+    vector <cl::Buffer> buffers_b(DIM_SIZE, cl::Buffer(context,  CL_MEM_READ_ONLY, DIM_SIZE * sizeof(int), nullptr, &err));
+    vector <cl::Buffer> buffers_a(DIM_SIZE, cl::Buffer(context, CL_MEM_READ_ONLY, DIM_SIZE * DIM_SIZE * sizeof(int),nullptr, &err));
+
+    cout << "BUFFER ERROR: " << err << endl;
+
+    vector <cl::Buffer> buffers_res(DIM_SIZE, cl::Buffer(context, CL_MEM_READ_ONLY, DIM_SIZE * sizeof(int), nullptr, &err));
+    cout << "BUFFER ERROR: " << err << endl;
     
-    //***************************************************
-    // STEP 8: Set the kernel arguments
-    //***************************************************
+    cl::Event write_event,task_event;
 
-    kernel.setArg(0, buffer_res);
-    kernel.setArg(1, buffer_a);
-    kernel.setArg(2, buffer_b);
-    kernel.setArg(3, DIM_SIZE);
-
-    //***************************************************
-    // STEP 9: Enqueue the kernel for execution
-    //***************************************************
-
-    q.enqueueTask(kernel);
-
-    //***************************************************
-    // STEP 12: Read the output buffer back to the host
-    //***************************************************
-    // Synchronous/blocking read of results
-
-    vector<int> result(DIM_SIZE, 0);
+    vector<cl::Event> iteration_events;
     
-    q.finish();
+    /* Rešiteve: 
 
-    q.enqueueReadBuffer(buffer_res, CL_TRUE, 0, result.size() * sizeof(int), c);
+    https://docs.xilinx.com/r/2021.2-English/ug1393-vitis-application-acceleration/Multiple-In-Order-Command-Queues.html
 
+    https://xilinx.github.io/Vitis-Tutorials/2020-1/docs/build/html/docs/Hardware_Accelerators/Design_Tutorials/01-convolution-tutorial/multi-CU.html
+    */
 
-    cout << "Resulting array: " << endl;
+    int count = 0;
+    for (i = 0; i < 16; i++){
+        // extract column from matB
+        extractColumn((int*)matB, DIM_SIZE, DIM_SIZE, i, vecB );
+        print_array(vecB, DIM_SIZE);
     
-    for (int i = 0; i < DIM_SIZE; i++){
-        cout << c[i] << " ";
+        // Run kernels
+        q.enqueueWriteBuffer( buffers_b[i],  CL_TRUE, 0, DIM_SIZE * sizeof(int), (int*)vecB, &iteration_events, &write_event);
+        //q.enqueueWriteBuffer( buffers_a[i],  CL_FALSE, 0, DIM_SIZE * DIM_SIZE * sizeof(int), (int*)matA);
+        iteration_events.push_back(write_event);
+        // set kernel arguments
+        kernel.setArg(0, buffers_res[i]);
+        kernel.setArg(1, buffer_a);
+        kernel.setArg(2, buffers_b[i]);
+
+        //  run the kernel
+        q.enqueueTask(kernel,  &iteration_events, &task_event);
+        // read results back to the host 
+        q.enqueueReadBuffer(buffers_res[i], CL_TRUE, 0, DIM_SIZE * sizeof(int), intRes);
+        iteration_events.push_back(write_event);
+
+        count++;
+        if(count == 16)
+            q.finish();
+            count=0;
+        
+        //
+       
+           
+        
+        // store the column into matC
+        storeColumn((int*)res, DIM_SIZE, DIM_SIZE, i, intRes);
+        count++;
+
+        
+    }
+  
+    
+    int sum = 0;
+    cout << "RESULT: " << endl;
+    for ( i = 0; i < DIM_SIZE; i++){
+        for (j = 0; j < DIM_SIZE; j++){
+            cout << res[i][j]/64.0 << ", ";
+        }
+        cout << endl;
     }
     cout << endl;
     

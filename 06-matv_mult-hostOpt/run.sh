@@ -17,11 +17,11 @@ fi
 cd ./build
 DIR=./src
 BUILD_DIR=./build
-KERNEL=matv_mult_opt
+KERNEL=matv_mult_dataflow
 OBJ_FILE=${KERNEL}_$1
+OOO=1
 
 
-
-XCL_EMULATION_MODE=$1 ./host $PLATFORM $OBJ_FILE.xclbin
+XCL_EMULATION_MODE=$1 ./host $PLATFORM $OBJ_FILE.xclbin $OOO
 
 cd $HOME

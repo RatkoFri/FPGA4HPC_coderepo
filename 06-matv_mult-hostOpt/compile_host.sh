@@ -35,6 +35,7 @@ cp ./src/xrt.ini $BUILD_DIR/xrt.ini
 cd $BUILD_DIR
 pwd
 
+
 g++ $DIR/host.cpp -I$XILINX_XRT/include -I$XILINX_VIVADO/include -lOpenCL -o ./host
 
 
