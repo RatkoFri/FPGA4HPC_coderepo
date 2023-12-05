@@ -29,7 +29,7 @@ BUILD_DIR=./build
 mkdir -p $BUILD_DIR
 
 
-KERNEL=./matv_mult_dataflow
+KERNEL=matv_mult_dataflow
 
 cp ./src/xrt.ini $BUILD_DIR/xrt.ini
 
@@ -37,10 +37,10 @@ cd $BUILD_DIR
 pwd
 #OBJ_FILE=${KERNEL}_u280_$1
 OBJ_FILE=${KERNEL}_$1
-
+CU_NUM=4
 emconfigutil --platform $PLATFORM
-v++ -c -t $1 --platform $PLATFORM --config $DIR/fpga.cfg -k $KERNEL $DIR/$KERNEL.cpp -o ./$OBJ_FILE.xo
-v++ -l -t $1 --platform $PLATFORM --config $DIR/fpga.cfg ./$OBJ_FILE.xo -o ./$OBJ_FILE.xclbin
+v++ -c -t $1 --connectivity.nk $KERNEL:$CU_NUM --platform $PLATFORM --config $DIR/fpga.cfg -k $KERNEL $DIR/$KERNEL.cpp -o ./$OBJ_FILE.xo
+v++ -l -t $1 --connectivity.nk $KERNEL:$CU_NUM --platform $PLATFORM --config $DIR/fpga.cfg ./$OBJ_FILE.xo -o ./$OBJ_FILE.xclbin
 
 
 cd $HOME
