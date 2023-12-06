@@ -23,13 +23,12 @@
 #define CL_HPP_MINIMUM_OPENCL_VERSION 120
 #define CL_HPP_ENABLE_PROGRAM_CONSTRUCTION_FROM_ARRAY_COMPATIBILITY 1
 #define CL_USE_DEPRECATED_OPENCL_1_2_APIS
-
+#define NUM_CU 1
 #include <CL/cl2.hpp>
 #include <CL/cl_ext_xilinx.h>
 
 #define DIM_SIZE 64
 #define KERNEL_CL "matv_mult_dataflow"
-
 
 using namespace std;
 
@@ -59,32 +58,13 @@ vector<unsigned char> read_binary_file(const std::string &filename)
     return data;
 }
 
-void extractColumn(int *matrix, int numRows, int numCols, int column, int *result) {
-    for (int i = 0; i < numRows; i++) {
-        result[i] = *(matrix + i*numCols + column);
-    }
-}
-
-void storeColumn(int *matrix, int numRows, int numCols, int column, int *result) {
-    for (int i = 0; i < numRows; i++) {
-        *(matrix + i*numCols + column) = result[i];
-    }
-}
-
-void print_array(int *array, int size) {
-    for (int i = 0; i < size; i++) {
-        cout << array[i] << " ";
-    }
-    cout << endl;
-}
-
 int main(int argc, char** argv) {
     
     cl_int err;
 
     // read arguments 
-    if (argc != 4) {
-        cout << "Usage: " << argv[0] << " device name kernel" << " OOO Execution" << endl;
+    if (argc != 3) {
+        cout << "Usage: " << argv[0] << " device name kernel" <<  endl;
         return EXIT_FAILURE;
     }
 
@@ -102,6 +82,8 @@ int main(int argc, char** argv) {
 
     int vecB[DIM_SIZE];
     int res[DIM_SIZE][DIM_SIZE];
+    // trasnpose matrix res
+    int Tres[DIM_SIZE][DIM_SIZE];
 
     // initialize matrix and vectors 
     for(i=0;i<DIM_SIZE;i++){
@@ -111,15 +93,15 @@ int main(int argc, char** argv) {
         }
         vecB[i] = 1;
     }
+
+    // transpose matrix B
+    int TmatB[DIM_SIZE][DIM_SIZE];
+    for(i=0;i<DIM_SIZE;i++){
+        for(j=0;j<DIM_SIZE;j++){
+            TmatB[i][j] = matB[j][i];
+        }
+    }
     
-    bool ooo = false;
-    if (atoi(argv[3]) != 0) {
-        cout << "OOO Execution" << endl;
-        ooo = true;
-    }
-    else {
-        cout << "Non OOO Execution" << endl;
-    }
     //***************************************************
     // STEP 1: Get the platform 
     //***************************************************
@@ -175,6 +157,8 @@ int main(int argc, char** argv) {
     //***************************************************
     // we create a command queue with the selected device and context using CommandQueue class 
     
+    bool ooo = true;
+
     cl_ulong qp = CL_QUEUE_PROFILING_ENABLE;
     if (ooo)
         qp = qp | CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE;
@@ -183,9 +167,6 @@ int main(int argc, char** argv) {
     
     cout << "COMMAND QUEUE ERROR: " << err << endl;
 
-
-
-  
     //**************a*************************************
     // STEP 6: Create a program object for the context
     //***************************************************
@@ -202,81 +183,69 @@ int main(int argc, char** argv) {
     //***************************************************
     // STEP 6: Create the kernel object
     //***************************************************
+    cl::Kernel krnls[NUM_CU];
     if (err != CL_SUCCESS) {
         std::cout << "Failed to program device with xclbin file!\n";
         cout << err << endl;
     } else {
-        std::cout << "Device: program successful!\n";
-        kernel = cl::Kernel(program, KERNEL_CL, &err);
+        for (int i = 0; i < NUM_CU;i++){
+            std::cout << "Device: program successful!\n";
+            krnls[i] = cl::Kernel(program, KERNEL_CL, &err);
          // we break because we found a valid device
+        }
     }
     //***************************************************
-    // STEP 7: Preload buffer A 
+    // STEP 7: Create buffer for matrix A 
     //***************************************************
-    cl::Buffer buffer_a(context, CL_MEM_COPY_HOST_PTR | CL_MEM_READ_ONLY, DIM_SIZE * DIM_SIZE * sizeof(int), (int*)matA, &err);    
+    cl::Buffer buffer_a(context, CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, DIM_SIZE * DIM_SIZE * sizeof(int), (int*)matA, &err);    
     
-    int intRes[DIM_SIZE];
     //***************************************************
-    // STEP 8: Create buffers for vecB and interim results 
+    // STEP 8: Create buffers for each row of transposed matrix B and result
     //***************************************************
-
-    // create buffers, for each kernel running in parallel
-    vector <cl::Buffer> buffers_b(DIM_SIZE, cl::Buffer(context,  CL_MEM_READ_ONLY, DIM_SIZE * sizeof(int), nullptr, &err));
-    vector <cl::Buffer> buffers_a(DIM_SIZE, cl::Buffer(context, CL_MEM_READ_ONLY, DIM_SIZE * DIM_SIZE * sizeof(int),nullptr, &err));
-
-    cout << "BUFFER ERROR: " << err << endl;
-
-    vector <cl::Buffer> buffers_res(DIM_SIZE, cl::Buffer(context, CL_MEM_READ_ONLY, DIM_SIZE * sizeof(int), nullptr, &err));
-    cout << "BUFFER ERROR: " << err << endl;
+    cl::Buffer buffers_b[DIM_SIZE];
+    cl::Buffer buffers_res[DIM_SIZE];
     
-    cl::Event write_event, task_event;
+    for (int i = 0; i < DIM_SIZE; i++) {
+        buffers_b[i] = cl::Buffer(context,  CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, DIM_SIZE * sizeof(int), &TmatB[i][0], &err);
+        buffers_res[i] = cl::Buffer(context,  CL_MEM_USE_HOST_PTR | CL_MEM_WRITE_ONLY, DIM_SIZE * sizeof(int), &Tres[i][0], &err);
+    }
 
-    cl::Event mEvent[3];
-    vector<cl::Event> event_array;
-
-    /* Rešiteve: 
-
-    https://docs.xilinx.com/r/2021.2-English/ug1393-vitis-application-acceleration/Multiple-In-Order-Command-Queues.html
-
-    https://xilinx.github.io/Vitis-Tutorials/2020-1/docs/build/html/docs/Hardware_Accelerators/Design_Tutorials/01-convolution-tutorial/multi-CU.html
-    */
-
-    int count = 0;
-    for (i = 0; i < DIM_SIZE; i++){
-        // extract column from matB
-        extractColumn((int*)matB, DIM_SIZE, DIM_SIZE, i, vecB );
-        print_array(vecB, DIM_SIZE);
-        cout << "HERE"  << endl;
-        // Run kernels
-        q.enqueueWriteBuffer( buffers_b[i],  CL_FALSE, 0, DIM_SIZE * sizeof(int), (int*)vecB, &event_array, &mEvent[0]);
-        //q.enqueueWriteBuffer( buffers_a[i],  CL_FALSE, 0, DIM_SIZE * DIM_SIZE * sizeof(int), (int*)matA);
-        event_array.push_back(mEvent[0]);
-        // set kernel arguments
-        kernel.setArg(0, buffers_res[i]);
-        kernel.setArg(1, buffer_a);
-        kernel.setArg(2, buffers_b[i]);
-
-        //  run the kernel
-        q.enqueueTask(kernel,  &event_array, &mEvent[1]);
-        event_array.push_back(mEvent[1]);
-
-        //mEvent[1].wait();
-        // read results back to the host 
-        q.enqueueReadBuffer(buffers_res[i], CL_TRUE, 0, DIM_SIZE * sizeof(int), intRes, &event_array, &mEvent[2]);
-        event_array.push_back(mEvent[2]);
-
+    for (i = 0; i < DIM_SIZE; i=i+NUM_CU) {
         
-        // store the column into matC
-        storeColumn((int*)res, DIM_SIZE, DIM_SIZE, i, intRes);
-        count++;
-        
-        ///mEvent[2].wait();
+        for (int j = 0; j < NUM_CU; j++) {
 
-        
+            // set kernel arguments
+            krnls[j].setArg(0, buffers_res[i+j]);
+            krnls[j].setArg(1, buffer_a);
+            krnls[j].setArg(2, buffers_b[i+j]);
+            
+            // migrate memory
+            q.enqueueMigrateMemObjects({buffer_a, buffers_b[i+j]}, 0 /* 0 means from host*/);
+            //  run the kernel
+            q.enqueueTask(krnls[j]);
+
+        }
     }
     
     q.finish();
+
+    for (i = 0; i < DIM_SIZE; i=i+NUM_CU) {
+        for (int j = 0; j < NUM_CU; j++) {
+            q.enqueueMigrateMemObjects({buffers_res[i+j]}, CL_MIGRATE_MEM_OBJECT_HOST);
+        }
+    }
     
+    q.finish();
+
+
+
+    // Transpose matrix Tres
+    for (int i = 0; i < DIM_SIZE; i++) {
+        for (int j = 0; j < DIM_SIZE; j++) {
+            res[j][i] = Tres[i][j];
+        }
+    }
+
     int sum = 0;
     cout << "RESULT: " << endl;
     for ( i = 0; i < DIM_SIZE; i++){
@@ -289,3 +258,11 @@ int main(int argc, char** argv) {
     
     return 0;
 }
+
+
+// Types of datatransfer
+// MigrateObject -> immeadiatly transfers the data from host to device
+// writeBuffer -> transfers the data from host to device when kernel starts 
+// i loop and the kernel latches the wrong number. Maybe wait for the kernel to start ?
+// https://xilinx.github.io/Vitis_Accel_Examples/2021.1/html/data_transfer.html
+// Tips and tricks: https://docs.xilinx.com/r/2021.2-English/ug1393-vitis-application-acceleration/Compute-Unit-Scheduling
