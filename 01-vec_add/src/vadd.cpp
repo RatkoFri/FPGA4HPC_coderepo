@@ -20,7 +20,8 @@ extern "C" {
 
         int arrayA[BUFFER_SIZE];
         int arrayB[BUFFER_SIZE];
-    
+        int arrayC[BUFFER_SIZE];
+
     main_loop:
         for (int i = 0; i < n_elements; i += BUFFER_SIZE)
         {
@@ -37,9 +38,14 @@ extern "C" {
             for(int j = 0; j < size; j++)
                 arrayB[j] = b[i + j];
 
-        vadd_writeC:
+        vadd:
             for(int j = 0; j < size; j++)
-                c[i + j] = arrayA[j] + arrayB[j];
+                arrayC[j] = arrayA[j] + arrayB[j];
+        }
+
+        write_C:
+            for(int j = 0; j < size; j++)
+                C[i+j] = arrayC[j];
         }
     }
 }
