@@ -144,9 +144,9 @@ int main(int argc, char** argv) {
     // STEP 5: Create device buffers
     //***************************************************
 
-    cl::Buffer buffer_a(context, CL_MEM_COPY_HOST_PTR | CL_MEM_READ_ONLY, DIM_SIZE * DIM_SIZE * sizeof(int), (int*)a, &err);    
-    cl::Buffer buffer_b(context, CL_MEM_COPY_HOST_PTR | CL_MEM_READ_ONLY, DIM_SIZE * sizeof(int), b, &err);
-    cl::Buffer buffer_res(context, CL_MEM_ALLOC_HOST_PTR | CL_MEM_READ_WRITE, DIM_SIZE * sizeof(int), nullptr, &err);
+    cl::Buffer buffer_a(context, CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, DIM_SIZE * DIM_SIZE * sizeof(int), (int*)a, &err);    
+    cl::Buffer buffer_b(context, CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, DIM_SIZE * sizeof(int), b, &err);
+    cl::Buffer buffer_res(context,  CL_MEM_USE_HOST_PTR | CL_MEM_WRITE_ONLY, DIM_SIZE * sizeof(int), c, &err);
 
     //**************a*************************************
     // STEP 6: Create a program object for the context
@@ -175,10 +175,8 @@ int main(int argc, char** argv) {
     // STEP 7: Write host data to device buffers
     //***************************************************
 
-    
-    //q.enqueueWriteBuffer( buffer_a,  CL_FALSE, 0, source_a.size() * sizeof(int), source_a.data());
-    //q.enqueueWriteBuffer( buffer_b,  CL_FALSE, 0, source_b.size() * sizeof(int), source_b.data());
-    
+    q.enqueueMigrateMemObjects({buffer_a, buffer_b}, 0 ); /* 0 means from host*/
+
     //***************************************************
     // STEP 8: Set the kernel arguments
     //***************************************************
@@ -198,12 +196,11 @@ int main(int argc, char** argv) {
     // STEP 12: Read the output buffer back to the host
     //***************************************************
     // Synchronous/blocking read of results
+    
 
-    vector<int> result(DIM_SIZE, 0);
+    q.enqueueMigrateMemObjects({buffer_res}, CL_MIGRATE_MEM_OBJECT_HOST);
     
     q.finish();
-
-    q.enqueueReadBuffer(buffer_res, CL_TRUE, 0, result.size() * sizeof(int), c);
 
 
     cout << "Resulting array: " << endl;
