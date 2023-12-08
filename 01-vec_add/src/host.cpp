@@ -175,7 +175,6 @@ int main(int argc, char** argv) {
     // STEP 7: Write host data to device buffers
     //***************************************************
 
-    
     q.enqueueMigrateMemObjects({buffer_a, buffer_b}, 0 ); /* 0 means from host*/
 
     //***************************************************
@@ -196,13 +195,10 @@ int main(int argc, char** argv) {
     //***************************************************
     // STEP 12: Read the output buffer back to the host
     //***************************************************
-    // Synchronous/blocking read of results
 
     q.enqueueMigrateMemObjects({buffer_res}, CL_MIGRATE_MEM_OBJECT_HOST);
 
     q.finish();
-    
-
 
     cout << "Calculating sum of resulting array: " << endl;
     

@@ -43,9 +43,8 @@ extern "C" {
                 arrayC[j] = arrayA[j] + arrayB[j];
         }
 
-        write_C:
-            for(int j = 0; j < size; j++)
-                C[i+j] = arrayC[j];
-        }
+        writeC:
+        for(int j = 0; j < size; j++)
+             c[i + j] = arrayC[j];
     }
 }
