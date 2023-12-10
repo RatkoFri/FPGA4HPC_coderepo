@@ -14,9 +14,12 @@ extern "C" {
     void cho_dec(int* L, 
                  const int* A){   
         
-        #pragma HLS interface m_axi port=L bundle=aximm1
-        #pragma HLS interface m_axi port=A bundle=aximm2
 
+        // TODO: Enable burst read and write 
+        // TODO: Enable separate bundles for L and A
+        
+
+        // TODO: Add pragmas for array partitioning
         int dataA[N][N];
         int dataL[N][N] = {{0}};
         int i,j,k;

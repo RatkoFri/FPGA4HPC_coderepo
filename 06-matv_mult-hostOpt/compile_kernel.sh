@@ -5,23 +5,26 @@
 PLATFORM=xilinx_u250_gen3x16_xdma_4_1_202210_1
 #PLATFORM=xilinx_u280_gen3x16_xdma_1_202211_1
 
-IT4I_HOST="login.cs.it4i.cz"
-if test "$HOSTNAME" = "$IT4I_HOST"
-then
-    # Execute commands for hostname equal to str1
-    echo "you are on login.cs.it4i.cz"
-    export PLATFORM_REPO_PATHS=/opt/xilinx/platforms/${PLATFORM}/
-    . /tools/Xilinx/Vitis/2023.1/settings64.sh
-    . /opt/xilinx/xrt/setup.sh
-else
-    # Execute commands for hostname not equal to str1
-    echo "you are on nsc"
-    . /ceph/grid/software/xilinx/tools/Vitis/2023.1/settings64.sh
-    . /opt/xilinx/xrt/setup.sh
-    export PLATFORM_REPO_PATHS=/opt/xilinx/platforms/${PLATFORM}/
-fi
+# IT4I_HOST="login.cs.it4i.cz"
+# if test "$HOSTNAME" = "$IT4I_HOST"
+# then
+#     # Execute commands for hostname equal to str1
+#     echo "you are on login.cs.it4i.cz"
+#     export PLATFORM_REPO_PATHS=/opt/xilinx/platforms/${PLATFORM}/
+#     . /tools/Xilinx/Vitis/2023.1/settings64.sh
+#     . /opt/xilinx/xrt/setup.sh
+# else
+#     # Execute commands for hostname not equal to str1
+#     echo "you are on nsc"
+#     . /ceph/grid/software/xilinx/tools/Vitis/2023.1/settings64.sh
+#     . /opt/xilinx/xrt/setup.sh
+#     export PLATFORM_REPO_PATHS=/opt/xilinx/platforms/${PLATFORM}/
+# fi
 
-
+echo "you are on login.cs.it4i.cz"
+export PLATFORM_REPO_PATHS=/opt/xilinx/platforms/${PLATFORM}/
+. /tools/Xilinx/Vitis/2023.1/settings64.sh
+. /opt/xilinx/xrt/setup.sh
 
 HOME=$PWD
 DIR=../src
@@ -36,7 +39,7 @@ cp ./src/xrt.ini $BUILD_DIR/xrt.ini
 cd $BUILD_DIR
 pwd
 #OBJ_FILE=${KERNEL}_u280_$1
-OBJ_FILE=${KERNEL}_$1
+OBJ_FILE=${KERNEL}_u250_$1
 CU_NUM=4
 emconfigutil --platform $PLATFORM
 v++ -c -t $1 --connectivity.nk $KERNEL:$CU_NUM --platform $PLATFORM --config $DIR/fpga.cfg -k $KERNEL $DIR/$KERNEL.cpp -o ./$OBJ_FILE.xo

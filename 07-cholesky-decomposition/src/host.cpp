@@ -167,8 +167,7 @@ int main(int argc, char** argv) {
     //***************************************************
     // we create a context with the selected device using Context class 
     
-    cl::Context context(device, nullptr, nullptr, nullptr, &err);
-    cout << "CONTEXT ERROR: " << err << endl;
+    // TODO: Create context using cl::Context class
 
     //***************************************************
     // STEP 4: Create a command queue 
@@ -182,8 +181,9 @@ int main(int argc, char** argv) {
     // STEP 5: Create device buffers
     //***************************************************
 
-    cl::Buffer buffer_a(context, CL_MEM_COPY_HOST_PTR | CL_MEM_READ_ONLY, N * N * sizeof(int), (int*) A, &err);    
-    cl::Buffer buffer_res(context, CL_MEM_ALLOC_HOST_PTR | CL_MEM_WRITE_ONLY, N * N * sizeof(int), nullptr, &err);
+    // TODO: Create device buffers using cl::Buffer class
+    // cl::Buffer buffer_a();    
+    // cl::Buffer buffer_res();
 
     //***************************************************
     // STEP 6: Create a program object for the context
@@ -210,27 +210,32 @@ int main(int argc, char** argv) {
     }
 
     //***************************************************
+    // STEP 7: Write host data to device buffers
+    //***************************************************
+
+    q.enqueueMigrateMemObjects({buffer_a}, 0 ); /* 0 means from host*/
+
+    //***************************************************
     // STEP 8: Set the kernel arguments
     //***************************************************
 
-    kernel.setArg(0, buffer_res);
-    kernel.setArg(1, buffer_a);
+    // TODO: Set kernel arguments
 
     //***************************************************
     // STEP 9: Enqueue the kernel for execution
     //***************************************************
 
-    q.enqueueTask(kernel);
-
+    // TODO: Enqueue kernel
+    
     //***************************************************
     // STEP 12: Read the output buffer back to the host
     //***************************************************
-    // Synchronous/blocking read of results
     
+    // TODO: Read the output buffer back to the host
+
     q.finish();
 
-    q.enqueueReadBuffer(buffer_res, CL_TRUE, 0, N * N * sizeof(int), (int*)L1);
-
+    
     cout << "Checking results: " << endl;
     
     // Compare L1 and L

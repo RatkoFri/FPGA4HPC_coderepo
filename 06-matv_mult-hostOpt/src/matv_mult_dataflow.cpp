@@ -60,7 +60,10 @@ extern "C" {
         #pragma HLS interface m_axi port=a bundle=aximm1 max_read_burst_length = 16 max_write_burst_length = 16
         #pragma HLS interface m_axi port=b bundle=aximm2 max_read_burst_length = 16 max_write_burst_length = 1
         #pragma HLS interface m_axi port=c bundle=aximm1 max_read_burst_length = 16 max_write_burst_length = 16
+        #pragma HLS interface s_axilite port = return bundle = control
+        #pragma HLS interface ap_ctrl_chain port = return 
 
+        
         #pragma HLS dataflow
         // max_read_burst_length denotes the number of elements in the burst
         int a_local[BLOCK_DIM_SIZE][BLOCK_DIM_SIZE];  

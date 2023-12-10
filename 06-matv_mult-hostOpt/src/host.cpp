@@ -23,7 +23,7 @@
 #define CL_HPP_MINIMUM_OPENCL_VERSION 120
 #define CL_HPP_ENABLE_PROGRAM_CONSTRUCTION_FROM_ARRAY_COMPATIBILITY 1
 #define CL_USE_DEPRECATED_OPENCL_1_2_APIS
-#define NUM_CU 4
+#define NUM_CU 16
 #include <CL/cl2.hpp>
 #include <CL/cl_ext_xilinx.h>
 
@@ -210,7 +210,7 @@ int main(int argc, char** argv) {
         buffers_res[i] = cl::Buffer(context,  CL_MEM_USE_HOST_PTR | CL_MEM_WRITE_ONLY, DIM_SIZE * sizeof(int), &Tres[i][0], &err);
     }
 
-    for (i = 0; i < DIM_SIZE; i=i+4) {
+    for (i = 0; i < DIM_SIZE; i=i+NUM_CU) {
         
         for (int j = 0; j < NUM_CU; j++) {
 

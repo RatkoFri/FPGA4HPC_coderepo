@@ -195,7 +195,6 @@ int main(int argc, char** argv) {
     //***************************************************
     // STEP 12: Read the output buffer back to the host
     //***************************************************
-    // Synchronous/blocking read of results
     
 
     q.enqueueMigrateMemObjects({buffer_res}, CL_MIGRATE_MEM_OBJECT_HOST);
