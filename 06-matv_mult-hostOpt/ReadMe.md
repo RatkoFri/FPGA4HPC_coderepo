@@ -16,18 +16,17 @@ $ cd 05-matv_mul-hostOpt
 $ ./compile_host.sh
 ```
 
-- download prebuilt kernels 
+- build the kernel
 ```console
-$ wget https://mapa.sling.si/s/C6dKbsGw7CgfcZz/download/binaries.zip
-$ unzip binaries.zip
+$ ./compile_kernel.sh sw_emu # or hw_emu for hw emulation
 ```console
 
-- run the application:
+- Run the application:
 ```console
 $ ./run.sh sw_emu #or hw_emu for hw emulation
 ```
 
-- analyze the results:
+- Analyze the results:
 
 On SLING NSC cluster: 
 
