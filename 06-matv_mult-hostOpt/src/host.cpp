@@ -23,7 +23,7 @@
 #define CL_HPP_MINIMUM_OPENCL_VERSION 120
 #define CL_HPP_ENABLE_PROGRAM_CONSTRUCTION_FROM_ARRAY_COMPATIBILITY 1
 #define CL_USE_DEPRECATED_OPENCL_1_2_APIS
-#define NUM_CU 16
+#define NUM_CU 4
 #include <CL/cl2.hpp>
 #include <CL/cl_ext_xilinx.h>
 
@@ -157,7 +157,7 @@ int main(int argc, char** argv) {
     //***************************************************
     // we create a command queue with the selected device and context using CommandQueue class 
     
-    bool ooo = true;
+    bool ooo = false;
 
     cl_ulong qp = CL_QUEUE_PROFILING_ENABLE;
     if (ooo)
@@ -210,22 +210,19 @@ int main(int argc, char** argv) {
         buffers_res[i] = cl::Buffer(context,  CL_MEM_USE_HOST_PTR | CL_MEM_WRITE_ONLY, DIM_SIZE * sizeof(int), &Tres[i][0], &err);
     }
 
-    q.enqueueMigrateMemObjects({buffer_a}, 0 /* 0 means from host*/);
-
     for (i = 0; i < DIM_SIZE; i=i+NUM_CU) {
         
         for (int j = 0; j < NUM_CU; j++) {
-
+            
             // set kernel arguments
             krnls[j].setArg(0, buffers_res[i+j]);
             krnls[j].setArg(1, buffer_a);
             krnls[j].setArg(2, buffers_b[i+j]);
             
             // migrate memory
-            q.enqueueMigrateMemObjects({ buffers_b[i+j]}, 0 /* 0 means from host*/);
+            q.enqueueMigrateMemObjects({buffer_a, buffers_b[i+j]}, 0 /* 0 means from host*/);
             //  run the kernel
             q.enqueueTask(krnls[j]);
-
         }
         q.finish();
 

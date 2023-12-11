@@ -204,34 +204,33 @@ int main(int argc, char** argv) {
     //***************************************************
     // STEP 8: Create buffers for each row of transposed matrix B and result
     //***************************************************
-   
+    cl::Event k_event[DIM_SIZE], read_event[DIM_SIZE];
+    cl::Event store_event[DIM_SIZE];
+    std::vector<cl::Event> krnl_events[DIM_SIZE];
+    
     q.enqueueMigrateMemObjects({buffer_a, buffer_b}, 0 /* 0 means from host*/);
 
-    for (i = 0; i < DIM_SIZE; i++) {
-        
 
-        // set kernel arguments
-        krnls.setArg(0, buffer_res);
-        krnls.setArg(1, buffer_a);
-        krnls.setArg(2, buffer_b);
-        krnls.setArg(3, i);
-
-        
-        // migrate memory
-        //  run the kernel
-        q.enqueueTask(krnls);
+    for (i = 0; i < DIM_SIZE; i+=16){ 
+        for (j = 0; j < 16; j++){
+            // set kernel arguments
+            krnls.setArg(0, buffer_res);
+            krnls.setArg(1, buffer_a);
+            krnls.setArg(2, buffer_b);
+            krnls.setArg(3, i+j);
+            q.enqueueTask(krnls);
+        }
+        q.finish();
     }
-    q.finish();
-
     q.enqueueMigrateMemObjects({buffer_res}, CL_MIGRATE_MEM_OBJECT_HOST);
-
+    q.finish();
 
 
     int sum = 0;
     cout << "RESULT: " << endl;
     for ( i = 0; i < DIM_SIZE; i++){
         for (j = 0; j < DIM_SIZE; j++){
-            cout << res[i][j] << ", ";
+            cout << res[i][j]/64.0 << ", ";
         }
         cout << endl;
     }

@@ -11,7 +11,11 @@ then
 else
     # Execute commands for hostname not equal to str1
     echo "you are on nsc"
+    . /ceph/grid/software/xilinx/tools/Vitis/2023.1/settings64.sh
+    . /opt/xilinx/xrt/setup.sh
+    export PLATFORM_REPO_PATHS=/opt/xilinx/platforms/${PLATFORM}/
 fi
+
 
 
 cd ./build
