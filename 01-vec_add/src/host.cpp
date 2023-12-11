@@ -37,7 +37,18 @@ vector<unsigned char> read_binary_file(const std::string &filename)
 {
     std::cout << "INFO: Reading " << filename << std::endl;
     std::ifstream file(filename, std::ios::binary);
+    //Check if the file is open
+    if (!file.is_open()) {
+        std::cerr << "ERROR: Failed to open file: " << filename << std::endl;
+        exit(1);
+    }
+    else
+    {
+        std::cout << "INFO: File opened successfully" << std::endl;
+    }
+    
     file.unsetf(std::ios::skipws);
+
 
     std::streampos file_size;
     file.seekg(0, std::ios::end);
