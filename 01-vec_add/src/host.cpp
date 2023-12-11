@@ -55,6 +55,8 @@ vector<unsigned char> read_binary_file(const std::string &filename)
     file_size = file.tellg();
     file.seekg(0, std::ios::beg);
 
+    cout << "INFO: File size: " << file_size << std::endl;
+
     std::vector<unsigned char> data;
     data.reserve(file_size);
     data.insert(data.begin(),
@@ -166,8 +168,11 @@ int main(int argc, char** argv) {
 
     cl::Kernel kernel;
     auto program_binary = read_binary_file(binary_file);
+
+    cout << "PROGRAM BINARY SIZE: " << program_binary.size() << endl;
     cl::Program::Binaries bins{{program_binary.data(), program_binary.size()}};
     
+    // meta files about bins
     std::cout << "Trying to program device: " << device.getInfo<CL_DEVICE_NAME>() << std::endl;
     cl::Program program(context, {device}, bins, nullptr, &err);
     //***************************************************

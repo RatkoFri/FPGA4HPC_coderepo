@@ -1,4 +1,5 @@
-PLATFORM=xilinx_u250_gen3x16_xdma_4_1_202210_1
+#PLATFORM=xilinx_u250_gen3x16_xdma_4_1_202210_1
+PLATFORM=xilinx_u280_gen3x16_xdma_1_202211_1
 
 IT4I_HOST="login.cs.it4i.cz"
 if test "$HOSTNAME" = "$IT4I_HOST"
@@ -22,6 +23,7 @@ DIR=./src
 BUILD_DIR=./build
 KERNEL=vadd
 
+ulimit -s unlimited
 XCL_EMULATION_MODE=$1 ./host $PLATFORM $KERNEL.xclbin
 
 cd $HOME
