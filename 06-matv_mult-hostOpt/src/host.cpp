@@ -210,6 +210,8 @@ int main(int argc, char** argv) {
         buffers_res[i] = cl::Buffer(context,  CL_MEM_USE_HOST_PTR | CL_MEM_WRITE_ONLY, DIM_SIZE * sizeof(int), &Tres[i][0], &err);
     }
 
+    q.enqueueMigrateMemObjects({buffer_a}, 0 /* 0 means from host*/);
+
     for (i = 0; i < DIM_SIZE; i=i+NUM_CU) {
         
         for (int j = 0; j < NUM_CU; j++) {
@@ -220,7 +222,7 @@ int main(int argc, char** argv) {
             krnls[j].setArg(2, buffers_b[i+j]);
             
             // migrate memory
-            q.enqueueMigrateMemObjects({buffer_a, buffers_b[i+j]}, 0 /* 0 means from host*/);
+            q.enqueueMigrateMemObjects({ buffers_b[i+j]}, 0 /* 0 means from host*/);
             //  run the kernel
             q.enqueueTask(krnls[j]);
 
