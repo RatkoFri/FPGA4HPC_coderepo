@@ -41,10 +41,11 @@ extern "C" {
         vadd:
             for(int j = 0; j < size; j++)
                 arrayC[j] = arrayA[j] + arrayB[j];
-        }
-
+        
         writeC:
         for(int j = 0; j < size; j++)
              c[i + j] = arrayC[j];
+
+        }
     }
 }
