@@ -38,7 +38,7 @@ cd $BUILD_DIR
 pwd
 
 
-g++ $DIR/host.cpp -I$XILINX_XRT/include -I$XILINX_VIVADO/include -lOpenCL -o ./host
+g++ $DIR/host.cpp -I$XILINX_XRT/include -I$XILINX_VIVADO/include -lOpenCL -pthread -o ./host
 
 
 cd $HOME
