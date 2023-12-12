@@ -40,7 +40,7 @@ $ ssh -X username-ID@login.cs.it4i.cz
 - Allocate and connect to the node with FPGA 
 
 ```console
-$ salloc --x11 -A DD-XX-XXX -n2 -p p03-amd --gres=fpga 
+$ salloc --x11 -A DD-23-117 -n2 -p p03-amd --gres=fpga 
 ```
 
 - Find the FPGA devices
