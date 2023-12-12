@@ -6,7 +6,7 @@
 - Open the terminal and connect to the cluster using SSH
 
 ```console
-$ ssh -X username-ID@nsc-login1.ijs.si
+$ ssh -X username-ID@nsc-login2.ijs.si
 ```
 
 - Allocate the node with FPGA 
