@@ -12,7 +12,7 @@ $ ssh -X username-ID@nsc-login1.ijs.si
 - Allocate the node with FPGA 
 
 ```console
-$ salloc -N1 -n2 -C fpga --reservation=fri
+$ salloc -N1 -n2 -C fpga --reservation=fpga
 ```
 
 - Connect to it
@@ -40,7 +40,7 @@ $ ssh -X username-ID@login.cs.it4i.cz
 - Allocate and connect to the node with FPGA 
 
 ```console
-$ salloc --x11 -A DD-XX-XXX -p p03-amd --gres=fpga 
+$ salloc --x11 -A DD-XX-XXX -n2 -p p03-amd --gres=fpga 
 ```
 
 - Find the FPGA devices
