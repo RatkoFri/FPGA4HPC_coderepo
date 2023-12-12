@@ -6,8 +6,7 @@ PLATFORM=xilinx_u250_gen3x16_xdma_4_1_202210_1
 #PLATFORM=xilinx_u280_gen3x16_xdma_1_202211_1
 
 
-IT4I_HOST="login.cs.it4i.cz"
-if test "$HOSTNAME" = "$IT4I_HOST"
+if test $1 = "IT4I"
 then
     # Execute commands for hostname equal to str1
     echo "you are on login.cs.it4i.cz"
@@ -20,6 +19,7 @@ else
     . /ceph/grid/software/xilinx/tools/Vitis/2023.1/settings64.sh
     . /opt/xilinx/xrt/setup.sh
     export PLATFORM_REPO_PATHS=/opt/xilinx/platforms/${PLATFORM}/
+    module load foss/2021a
 fi
 
 

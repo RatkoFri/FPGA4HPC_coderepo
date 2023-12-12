@@ -11,15 +11,31 @@ In this exercise, we will employ dataflow optimization and analyze the HLS resul
 $ cd 05-matv_mul-dataflow
 ```
 
+### SLING NSC cluster: 
+
+
 - To execute the Tcl script, run the following shell script.
 ```sh linenums="1"
-./run_hls.sh
+./run_hls.sh SLING
 ```
 
 - After a successful synthesis, you can locate the results in the file.
 ```sh linenums="1"
 ./build/project/solution/syn/report/cynth.rpt 
 ```
+
+### IT4I CS cluster: 
+
+- To execute the Tcl script, run the following shell script.
+```sh linenums="1"
+./run_hls.sh IT4I
+```
+
+- After a successful synthesis, you can locate the results in the file.
+```sh linenums="1"
+./build/project/solution/syn/report/cynth.rpt 
+```
+
 
 ___
 

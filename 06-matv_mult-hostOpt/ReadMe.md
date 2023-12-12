@@ -13,17 +13,17 @@ $ cd 05-matv_mul-hostOpt
 - build the host application  
 
 ```console
-$ ./compile_host.sh
+$ ./compile_host.sh SLING # or IT4I
 ```
 
 - build the kernel
 ```console
-$ ./compile_kernel.sh sw_emu # or hw_emu for hw emulation
+$ ./compile_kernel.sh sw_emu SLING # or IT4I
 ```console
 
 - Run the application:
 ```console
-$ ./run.sh sw_emu #or hw_emu for hw emulation
+$ ./run.sh sw_emu SLING # or IT4I
 ```
 
 - Analyze the results:

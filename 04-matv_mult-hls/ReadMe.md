@@ -1,4 +1,4 @@
-# Using Vitis HLS and analyzing reports[^1]
+# Using Vitis HLS and analyzing reports
 
 
 ## Goal:
@@ -11,9 +11,12 @@ In this exercise, we will utilize Vitis HLS to synthesize the kernel. To facilit
 $ cd 04-matv_mul-hls
 ```
 
+### SLING NSC cluster: 
+
+
 - To execute the Tcl script, run the following shell script.
 ```sh linenums="1"
-./run_hls.sh
+./run_hls.sh SLING
 ```
 
 - After a successful synthesis, you can locate the results in the file.
@@ -21,10 +24,16 @@ $ cd 04-matv_mul-hls
 ./build/project/solution/syn/report/cynth.rpt 
 ```
 
-___
+### IT4I CS cluster: 
 
-[^1]: 
- &copy; Nejc Ilc and Ratko Pilipović, University of Ljubljana, Faculty of Computer and Information Science. 
- The materials are published under the ßlicense [Attribution-NonCommercial-ShareAlike 4.0 International](https://creativecommons.org/licenses/by-nc-sa/4.0/).
+- To execute the Tcl script, run the following shell script.
+```sh linenums="1"
+./run_hls.sh IT4I
+```
 
-___
+- After a successful synthesis, you can locate the results in the file.
+```sh linenums="1"
+./build/project/solution/syn/report/cynth.rpt 
+```
+
+

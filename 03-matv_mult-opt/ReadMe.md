@@ -1,4 +1,4 @@
-# Exercise 1: Matrix-vector multiplication - Optimized version [^1]
+# Exercise 1: Matrix-vector multiplication - Optimized version 
 
 ## Goal:
 
@@ -10,35 +10,40 @@ The purpose of this exercise is to implement a matrix-vector multiplication kern
 ```console
 $ cd 03-matv_mul-opt
 ```
+### SLING NSC cluster: 
+
 - build the application  
 
 ```console
-$ ./compile.sh sw_emu # or hw_emu for hw emulation
+$ ./compile.sh sw_emu SLING # or hw_emu for hw emulation
 ```
 
 - Run the application:
 ```console
-$ ./run.sh sw_emu #or hw_emu for hw emulation
+$ ./run.sh sw_emu SLING #or hw_emu for hw emulation
 ```
-
-- Analyze the results:
-
-On NSC cluster: 
+- Analyze the results 
 
 ```console
-. /ceph/grid/software/xilinx/tools/Vitis/2023.1/settings64.sh
-vitis_analyzer ./build/
+$ . /ceph/grid/software/xilinx/tools/Vitis/2023.1/settings64.sh
+$ vitis_analyzer ./build/
 ```
-On IT4I CS cluster: 
+
+### IT4I CS cluster: 
+
+- build the application  
+
+```console
+$ ./compile.sh sw_emu IT4I # or hw_emu for hw emulation
+```
+
+- Run the application:
+```console
+$ ./run.sh sw_emu IT4I #or hw_emu for hw emulation
+```
+- Analyze the results 
 
 ```console
 . /tools/Xilinx/Vitis/2023.1/settings64.sh
 vitis_analyzer ./build/
 ```
-___
-
-[^1]: 
- &copy; Nejc Ilc and Ratko Pilipović, University of Ljubljana, Faculty of Computer and Information Science. 
- The materials are published under the ßlicense [Attribution-NonCommercial-ShareAlike 4.0 International](https://creativecommons.org/licenses/by-nc-sa/4.0/).
-
-___
