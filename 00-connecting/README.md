@@ -12,7 +12,7 @@ $ ssh -X username-ID@nsc-login1.ijs.si
 - Allocate the node with FPGA 
 
 ```console
-$ salloc -N1 -n2 -C fpga --reservation=fpga
+$ salloc -N1 -n2 -C fpga --reservation=fpga --time=01:00:00
 ```
 
 - Connect to it
