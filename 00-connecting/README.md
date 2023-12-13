@@ -57,7 +57,7 @@ $ xbutil examine
 - Open the terminal and connect to the cluster using SSH
 
 ```console
-$ ssh -X username-ID@nsc-login2.ijs.si
+$ sbatch -c2 -C fpga --reservation=fpga ./sbatch_script.sh 
 ```
 
 
@@ -66,7 +66,7 @@ $ ssh -X username-ID@nsc-login2.ijs.si
 - Open the terminal and connect to the cluster using SSH
 
 ```console
-$ sbatch -A DD-23-117 -c2 -p p03-amd --gres=fpga ./sbatch_script_it4i.sh 
+$ sbatch -A DD-23-117 -c2 -p p03-amd --gres=fpga ./sbatch_script.sh 
 ```
 
 
