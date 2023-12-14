@@ -18,8 +18,7 @@ $ cd programming-fpga
 
 ___
 
-[^1]: 
- &copy; Nejc Ilc and Ratko Pilipović, University of Ljubljana, Faculty of computer and information science. 
+[^1]: &copy; Nejc Ilc and Ratko Pilipović, University of Ljubljana, Faculty of computer and information science. 
  The materials are published under license [Attribution-NonCommercial-ShareAlike 4.0 International](https://creativecommons.org/licenses/by-nc-sa/4.0/).
 
 ___
