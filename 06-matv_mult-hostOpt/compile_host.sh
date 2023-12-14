@@ -1,4 +1,3 @@
-
 #!/bin/bash
 # IF statement if shell which determines the paths for xrt and vivado
 # one branch for NSC one branch for ITI4CS 
@@ -19,7 +18,7 @@ else
     . /ceph/grid/software/xilinx/tools/Vitis/2023.1/settings64.sh
     . /opt/xilinx/xrt/setup.sh
     export PLATFORM_REPO_PATHS=/opt/xilinx/platforms/${PLATFORM}/
-    module load foss/2022a
+    #module load foss/2022a
 fi
 
 
