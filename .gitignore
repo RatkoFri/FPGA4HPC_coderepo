@@ -1,0 +1,11 @@
+.log
+.Xil*
+build/
+logs/
+*.json
+06-matv_mult-hostOpt/hw_syn.log
+06-matv_mult-hostOpt/src/Untitled-1
+06-matv_mult-hostOpt/binaries/
+*.zip
+error_*.txt
+output_*.txt
