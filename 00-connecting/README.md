@@ -23,32 +23,16 @@ $ ssh -X nsc-vfp001
 
 - Find the FPGA devices
 ```
-$ . /ceph/grid/software/xilinx/tools/Vitis/2023.1/settings64.sh
+$ . ./00-connecting/setup_env.sh  # from the repository root
 $ . /opt/xilinx/xrt/setup.sh
 $ xbutil examine 
 ```
 
 
-## Connecting to IT4I CS cluster 
+## Where the projects are built
 
-- Open the terminal and connect to the cluster using SSH
+The compile and run scripts do not build in your home directory. They copy the exercise sources to `/projects/fpga-training/$USER/<exercise>/`, build and run there, and copy the `build` directory back to the exercise directory when they finish. You can choose another location by setting `WORK_ROOT` before running a script.
 
-```console
-$ ssh -X username-ID@login.cs.it4i.cz
-```
-
-- Allocate and connect to the node with FPGA 
-
-```console
-$ salloc --x11 -A DD-23-117 -c2 -p p03-amd --gres=fpga 
-```
-
-- Find the FPGA devices
-```
-$ . /tools/Xilinx/Vitis/2023.1/settings64.sh
-$ . /opt/xilinx/xrt/setup.sh
-$ xbutil examine 
-```
 ## Batch scripts 
 
 
@@ -61,21 +45,10 @@ $ sbatch -c2 -C fpga --reservation=fpga ./sbatch_script.sh
 ```
 
 
-### IT4I CS cluster 
-
-- Open the terminal and connect to the cluster using SSH
-
-```console
-$ sbatch -A DD-23-117 -c2 -p p03-amd --gres=fpga ./sbatch_script.sh 
-```
-
-
-
-
 ___
 
 [^1]: 
- &copy; Nejc Ilc and Ratko Pilipović, University of Ljubljana, Faculty of computer and information science. 
- The materials are published under license [Attribution-NonCommercial-ShareAlike 4.0 International](https://creativecommons.org/licenses/by-nc-sa/4.0/).
+ &copy; Davor Sluga and Ratko Pilipović, University of Ljubljana, Faculty of Computer and Information Science. 
+ The materials are published under the license [Attribution-NonCommercial-ShareAlike 4.0 International](https://creativecommons.org/licenses/by-nc-sa/4.0/).
 
 ___

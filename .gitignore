@@ -8,4 +8,4 @@ logs/
 06-matv_mult-hostOpt/binaries/
 *.zip
 error_*.txt
-output_*.txt
+output_*.txt07-cholesky-decomposition/src/cpu/cholesky_decomposition

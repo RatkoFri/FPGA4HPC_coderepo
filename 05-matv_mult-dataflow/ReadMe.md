@@ -16,31 +16,18 @@ $ cd 05-matv_mul-dataflow
 
 - To execute the Tcl script, run the following shell script.
 ```sh linenums="1"
-./run_hls.sh SLING
+./run_hls.sh
 ```
 
 - After a successful synthesis, you can locate the results in the file.
 ```sh linenums="1"
 ./build/project/solution/syn/report/cynth.rpt 
 ```
-
-### IT4I CS cluster: 
-
-- To execute the Tcl script, run the following shell script.
-```sh linenums="1"
-./run_hls.sh IT4I
-```
-
-- After a successful synthesis, you can locate the results in the file.
-```sh linenums="1"
-./build/project/solution/syn/report/cynth.rpt 
-```
-
 
 ___
 
 [^1]: 
- &copy; Nejc Ilc and Ratko Pilipović, University of Ljubljana, Faculty of Computer and Information Science. 
- The materials are published under the ßlicense [Attribution-NonCommercial-ShareAlike 4.0 International](https://creativecommons.org/licenses/by-nc-sa/4.0/).
+ &copy; Davor Sluga and Ratko Pilipović, University of Ljubljana, Faculty of Computer and Information Science. 
+ The materials are published under the license [Attribution-NonCommercial-ShareAlike 4.0 International](https://creativecommons.org/licenses/by-nc-sa/4.0/).
 
 ___

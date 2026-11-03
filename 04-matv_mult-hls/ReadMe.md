@@ -16,24 +16,11 @@ $ cd 04-matv_mul-hls
 
 - To execute the Tcl script, run the following shell script.
 ```sh linenums="1"
-./run_hls.sh SLING
+./run_hls.sh
 ```
 
 - After a successful synthesis, you can locate the results in the file.
 ```sh linenums="1"
 ./build/project/solution/syn/report/cynth.rpt 
 ```
-
-### IT4I CS cluster: 
-
-- To execute the Tcl script, run the following shell script.
-```sh linenums="1"
-./run_hls.sh IT4I
-```
-
-- After a successful synthesis, you can locate the results in the file.
-```sh linenums="1"
-./build/project/solution/syn/report/cynth.rpt 
-```
-
 

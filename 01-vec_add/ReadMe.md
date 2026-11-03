@@ -16,34 +16,16 @@ $ cd 01-vec_add/
 - build the application  
 
 ```console
-$ ./compile.sh sw_emu SLING # or hw_emu for hw emulation
+$ ./compile.sh sw_emu # or hw_emu for hw emulation
 ```
 
 - Run the application:
 ```console
-$ ./run.sh sw_emu SLING #or hw_emu for hw emulation
+$ ./run.sh sw_emu #or hw_emu for hw emulation
 ```
 - Analyze the results 
 
 ```console
-$ . /ceph/grid/software/xilinx/tools/Vitis/2023.1/settings64.sh
+$ . ../00-connecting/setup_env.sh
 $ vitis_analyzer ./build/
-```
-### IT4I CS cluster: 
-
-- build the application  
-
-```console
-$ ./compile.sh sw_emu IT4I # or hw_emu for hw emulation
-```
-
-- Run the application:
-```console
-$ ./run.sh sw_emu IT4I #or hw_emu for hw emulation
-```
-- Analyze the results 
-
-```console
-. /tools/Xilinx/Vitis/2023.1/settings64.sh
-vitis_analyzer ./build/
 ```

@@ -1,16 +1,15 @@
 
 #!/bin/bash
-# IF statement if shell which determines the paths for xrt and vivado
-# one branch for NSC one branch for ITI4CS 
+# Set up the paths for XRT and Vitis on the SLING NSC cluster
 #PLATFORM=xilinx_u250_gen3x16_xdma_4_1_202210_1
 PLATFORM=xilinx_u280_gen3x16_xdma_1_202211_1
 
-echo "you are on login.cs.it4i.cz"
 export PLATFORM_REPO_PATHS=/opt/xilinx/platforms/${PLATFORM}/
-. /tools/Xilinx/Vitis/2023.1/settings64.sh
+. ../00-connecting/setup_env.sh
 . /opt/xilinx/xrt/setup.sh
 
-HOME=$PWD
+. ../00-connecting/workdir.sh
+enter_workdir
 DIR=../src
 BUILD_DIR=./build
 mkdir -p $BUILD_DIR
@@ -30,4 +29,4 @@ v++ -c -t $1 --connectivity.nk $KERNEL:$CU_NUM --platform $PLATFORM --config $DI
 v++ -l -t $1 --connectivity.nk $KERNEL:$CU_NUM --platform $PLATFORM --config $DIR/fpga.cfg ./$OBJ_FILE.xo -o ./$OBJ_FILE.xclbin
 
 
-cd $HOME
+leave_workdir
