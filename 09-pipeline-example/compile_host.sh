@@ -8,6 +8,7 @@ PLATFORM=xilinx_u250_gen3x16_xdma_4_1_202210_1
 . ../00-connecting/setup_env.sh
 . /opt/xilinx/xrt/setup.sh
 export PLATFORM_REPO_PATHS=/opt/xilinx/platforms/${PLATFORM}/
+module load foss/2022a
 
 
 . ../00-connecting/workdir.sh
@@ -26,7 +27,7 @@ cd $BUILD_DIR
 pwd
 
 
-g++ $DIR/host.cpp -I$XILINX_XRT/include -I$XILINX_VIVADO/include -lOpenCL -o ./host
+g++ $DIR/host.cpp -DDISABLE_ABI_CHECK -I$XILINX_XRT/include -I$XILINX_VIVADO/include -lOpenCL -o ./host
 
 
 leave_workdir
