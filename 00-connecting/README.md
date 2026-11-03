@@ -31,7 +31,7 @@ $ xbutil examine
 
 ## Where the projects are built
 
-The compile and run scripts do not build in your home directory. They copy the exercise sources to `/projects/fpga-training/$USER/<exercise>/`, build and run there, and copy the `build` directory back to the exercise directory when they finish. You can choose another location by setting `WORK_ROOT` before running a script.
+The compile and run scripts do not build in your home directory. They copy the exercise sources to `/projects/fpga-training/$USER/<exercise>/`, build and run there, and copy the `build` directory back to the exercise directory when they finish. After a successful copy, the work directory is deleted. You can choose another location by setting `WORK_ROOT` before running a script.
 
 ## Batch scripts 
 
