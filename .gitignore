@@ -9,3 +9,5 @@ logs/
 *.zip
 error_*.txt
 output_*.txt07-cholesky-decomposition/src/cpu/cholesky_decomposition
+*.jou
+*.log

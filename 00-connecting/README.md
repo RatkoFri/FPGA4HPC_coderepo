@@ -6,16 +6,12 @@
 - Open the terminal and connect to the cluster using SSH
 
 ```console
-$ ssh -X username-ID@nsc-login2.ijs.si
+$ ssh -o PubkeyAuthentication=no -o PreferredAuthentications=password -X user-id@nsc-login3.ijs.si
 ```
 
-- Allocate the node with FPGA 
 
-```console
-$ salloc -N1 -c2 -C fpga --reservation=fpga --time=01:00:00
-```
 
-- Connect to it
+- Connect to the FPGA node (nsc-vfp001) using SSH
 
 ```console
 $ ssh -X nsc-vfp001
