@@ -20,7 +20,8 @@ enter_workdir() {
     # always start from the user's current sources
     rm -rf "$WORK_DIR/src"
     cp -a "$EXERCISE_DIR/src" "$WORK_DIR/src"
-    # reuse results the user already has, e.g. when only running
+    # reuse results the user already has, e.g. the kernel when only
+    # the host is rebuilt
     if [ ! -d "$WORK_DIR/build" ] && [ -d "$EXERCISE_DIR/build" ]; then
         cp -a "$EXERCISE_DIR/build" "$WORK_DIR/build"
     fi

@@ -7,8 +7,7 @@ PLATFORM=xilinx_u250_gen3x16_xdma_4_1_202210_1
 export PLATFORM_REPO_PATHS=/opt/xilinx/platforms/${PLATFORM}/
 module load foss/2022a
 
-. ../00-connecting/workdir.sh
-enter_workdir
+EXERCISE_DIR=$PWD
 cd ./build
 DIR=./src
 BUILD_DIR=./build
@@ -21,7 +20,16 @@ OBJ_FILE=${KERNEL}_$1
 echo $OBJ_FILE
 
 emconfigutil --platform $PLATFORM
-XCL_EMULATION_MODE=$1 ./host $PLATFORM $OBJ_FILE.xclbin 
+# XCL_EMULATION_MODE must only be set for emulation, not for hw.
+# On the card, the device is named after its shell, not the platform.
+if [ "$1" = "sw_emu" ] || [ "$1" = "hw_emu" ]; then
+    export XCL_EMULATION_MODE=$1
+    DEVICE=$PLATFORM
+else
+    unset XCL_EMULATION_MODE
+    DEVICE=xilinx_u250_gen3x16_xdma_shell_4_1
+fi
+./host $DEVICE $OBJ_FILE.xclbin
 # ../build/host $PLATFORM $OBJ_FILE.xclbin 
 
-leave_workdir
+cd "$EXERCISE_DIR"
