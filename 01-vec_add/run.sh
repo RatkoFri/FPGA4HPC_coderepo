@@ -18,6 +18,7 @@ if [ "$1" = "sw_emu" ] || [ "$1" = "hw_emu" ]; then
     export XCL_EMULATION_MODE=$1
     DEVICE=$PLATFORM
 else
+    cd ../build_hw
     unset XCL_EMULATION_MODE
     DEVICE=xilinx_u250_gen3x16_xdma_shell_4_1
 fi

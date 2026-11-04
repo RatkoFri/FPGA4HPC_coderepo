@@ -1,6 +1,7 @@
 .log
 .Xil*
 build/
+build_hw/
 logs/
 *.json
 06-matv_mult-hostOpt/hw_syn.log
